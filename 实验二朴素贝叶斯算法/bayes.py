@@ -42,9 +42,10 @@ def creatall():
     for i in range(len(count)):
         temp = { }
         for key,value in diccount[i].items():
-            temp[key] = (value+1)/(count[i]+lendic[i]) 
+            temp[key] = ((value+1)/(count[i]+lendic[i]))*10**4 
         p.append(temp)
-        nll.append(1/(count[i]+lendic[i]))
+        nll.append((1/(count[i]+lendic[i]))*10**4)
+    
     return p,nll,dcount
 def bayes():
     p,nll,dcount = creatall()
@@ -52,27 +53,35 @@ def bayes():
     docusum = 0
     for i in range(len(dcount)):
         docusum = docusum + dcount[i]
+    
     test,testfrom = opentest(targettest)
+    #print(test[len(test)-1])
     result = []
+    temp = []
+       
     for i in range(len(test)):
         temp = []
         for j in range(len(p)):
             s = 1
             for k in range(len(test[i])):
                if test[i][k] in p[j].keys():
-                   s = s*p[j][test[i][k]]
+                       s = s*p[j][test[i][k]]
                else:
                    s =s*nll[j]
+                   
             s = s*(dcount[j]/docusum)
             temp.append(s) 
         result.append(classname[temp.index(max(temp))])
-    print(result)
+        #print(temp)
+        
+    #print(result)
     x = 0
     for i in range(len(result)):
         if result[i] == testfrom[i]:
             x = x+1
     accurate = x/len(result) 
-    print (accurate)           
+    print (accurate) 
+          
 def opentest(vectorpath):  #从文件中读取向量
     testFilesList = listdir(vectorpath)
     vsm = []     #存储向量
@@ -90,7 +99,8 @@ def opentest(vectorpath):  #从文件中读取向量
                 testvector.append(temp[k])
             vsm.append(testvector) 
     return vsm, vfrom   
-bayes()    
+bayes() 
+#creatall()
     
     
     
