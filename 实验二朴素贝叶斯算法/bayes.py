@@ -8,7 +8,7 @@ from os import listdir,mkdir,path
 from collections import Counter
 targettrain = 'E:/dataminingdata/train' #训练数据存储路径
 targettest = 'E:/dataminingdata/test'   #测试数据存储路径
-def creatediccount(sampleFilesDir): #计算词频和idf
+def creatediccount(sampleFilesDir): #计算每个类中的单词的词频
     n = 0
     wordMap = {}     #存储词频
     sampleList = listdir(sampleFilesDir)
@@ -28,7 +28,7 @@ def creatall():
     lendic = []   #存每个类词典的单词数量
     dcount = []  # 存每个类的文件总数
     p = []  #存储计算好的概率
-    nll=[]
+    nll=[]  #存储没有单词的概率
     
     fileDir = targettrain 
     sampleFilesList = listdir(fileDir)
@@ -42,7 +42,7 @@ def creatall():
     for i in range(len(count)):
         temp = { }
         for key,value in diccount[i].items():
-            temp[key] = ((value+1)/(count[i]+lendic[i]))*10**4 
+            temp[key] = ((value+1)/(count[i]+lendic[i]))*10**4 #用的多项式模型，用的多项式模型平滑方法由于计算结果太小给它乘10的4次方
         p.append(temp)
         nll.append((1/(count[i]+lendic[i]))*10**4)
     
@@ -64,7 +64,7 @@ def bayes():
         for j in range(len(p)):
             s = 1
             for k in range(len(test[i])):
-               if test[i][k] in p[j].keys():
+               if test[i][k] in p[j].keys(): #如果此类中有这个单词则乘这个概率，没有乘没有这个单词的概率
                        s = s*p[j][test[i][k]]
                else:
                    s =s*nll[j]
@@ -79,10 +79,10 @@ def bayes():
     for i in range(len(result)):
         if result[i] == testfrom[i]:
             x = x+1
-    accurate = x/len(result) 
+    accurate = x/len(result) #计算正确率
     print (accurate) 
           
-def opentest(vectorpath):  #从文件中读取向量
+def opentest(vectorpath):  #从文件中读取测试文件
     testFilesList = listdir(vectorpath)
     vsm = []     #存储向量
     vfrom = [ ]  #存储类别
